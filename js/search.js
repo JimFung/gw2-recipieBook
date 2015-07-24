@@ -1,27 +1,21 @@
-var url = 'https://api.guildwars2.com/v2/'
-
+//Access to json here: https://api.myjson.com/bins/1dzrh
 /*
+Superior Rune of the Defender
 https://api.guildwars2.com/v2/items "name"
 https://api.guildwars2.com/v2/recipes "output_item_id"
 */
-var master_list = [];
+
+var url = 'https://api.guildwars2.com/v2/'
+//var data = 'https://cdn.rawgit.com/JimFung/gw2-recipieBook/master/js/dataset.json'
+
+//setting up dataset
+var dataURL = 'https://api.myjson.com/bins/1dzrh'
+var dataset = null
+$.get(dataURL, function(resp){
+	dataset = resp;
+});
+
 $(document).ready(function(){
-
-	/*Set-up data*/
-	$.get(url+"recipes", function(data){
-		console.log(data.length);
-		for(var i = 0, len = data.length; i < len; i++){
-			$.get(url+"recipes/"+data[i], function(reci){
-				$.get(url+"items/"+reci["output_item_id"],function(item){
-					// console.log(item["name"] + ": " + reci["output_item_id"]);
-					// $(".content").append("<p>\"" + item["name"] + "\": " + reci["output_item_id"] + ",</p>");
-					master_list[item["name"]] = reci["output_item_id"];					
-				});
-			});
-		}
-	});
-
-	console.log(master_list);
 
 	// submit on enter
 	$(".search-box").keypress(function(event){
@@ -31,14 +25,26 @@ $(document).ready(function(){
 		}
 	});
 
-	// submit on clic
+	// submit on click
 	$(".search").click(function(){
 		search($(".search-box").val());
 	});
 
 	// search logic
-	function search(recipe){
+	function search(item){
+		$.get(url+"recipes/"+dataset[item],function(resp){
+			displayContent(resp);
+		});
+	}
 
+	function displayContent(resp){
+		// $(".content").append("<p>"+resp["id"]+"</p>");
+		console.log(resp);
+		for(decipline in resp["disciplines"]){
+			$(".content").append("<p>"+resp["disciplines"][decipline]+"</p>");
+		}
+		// for(decipline in resp["disciplines"]){
+		// 	$(".content").append("<p>"+decipline+"</p>");
+		// }
 	}
 });
-
